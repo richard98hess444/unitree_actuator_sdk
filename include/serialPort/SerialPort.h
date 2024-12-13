@@ -51,7 +51,7 @@ class SerialPort : public IOPort{
 public:
     SerialPort(const std::string &portName,
             size_t recvLength = 16,
-            uint32_t baudrate = 4000000,
+            uint32_t baudrate = 0,
             size_t timeOutUs = 20000, 
             BlockYN blockYN = BlockYN::NO,
             bytesize_t bytesize = bytesize_t::eightbits,
@@ -60,7 +60,7 @@ public:
             flowcontrol_t flowcontrol = flowcontrol_t::flowcontrol_none);
     virtual ~SerialPort();
     void resetSerial(size_t recvLength = 16,
-                     uint32_t baudrate = 4000000,
+                     uint32_t baudrate = 0,
                      size_t timeOutUs = 20000,
                      BlockYN blockYN = BlockYN::NO,
                      bytesize_t bytesize = bytesize_t::eightbits,

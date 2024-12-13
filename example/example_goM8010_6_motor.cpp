@@ -16,10 +16,10 @@ int main() {
     cmd.mode = queryMotorMode(MotorType::GO_M8010_6,MotorMode::FOC);
     cmd.id   = 0;
     cmd.kp   = 0.0;
-    cmd.kd   = 0.01;
+    cmd.kd   = 0.0; //0.01;
     cmd.q    = 0.0;
-    cmd.dq   = -6.28*queryGearRatio(MotorType::GO_M8010_6);
-    cmd.tau  = 0.0;
+    cmd.dq   = 0.0; //-6.28*queryGearRatio(MotorType::GO_M8010_6);
+    cmd.tau  = 0.2;
     serial.sendRecv(&cmd,&data);
 
     std::cout <<  std::endl;
