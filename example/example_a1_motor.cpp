@@ -76,7 +76,7 @@ void systemInfoWarn(){
 }
 
 void safetyMonitor(const std::vector<MotorData>& motorDataVec){
-  double threshDq{25.0};
+  double threshDq{30.0};
   double threshTau{1.0};
 
   for (const auto& motor : motorDataVec) {
@@ -263,4 +263,11 @@ int main() {
     serial.sendRecv(motorCmdVec, motorDataVec);
     usleep(200);
   }
+  
+  // Effort zero for all motors after shutdown
+  motorCmdVec.clear();
+  motorDataVec.clear();
+  motorCmdVec = allMotorsZeroEffort();
+  for (uint32_t i{0}; i < 3; ++i){motorDataVec.push_back(templateMotorData);}
+  serial.sendRecv(motorCmdVec, motorDataVec);
 }
