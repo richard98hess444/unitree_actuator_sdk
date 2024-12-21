@@ -6,7 +6,6 @@
 #include <chrono>
 #include <iomanip>
 
-
 // target radius
 float RR_hip_tar = -0.447;
 float RR_thigh_tar = 2.200;
@@ -28,7 +27,8 @@ std::array<double, 3> cmdAngles{q0, q1, q2};
 // inverted index
 std::array<double, 3> invertedIndex{-1, -1, 1};
 
-int main() {
+int main()
+{
 
   SerialPort serial("/dev/ttyUSB0");
   MotorCmd cmd;
@@ -38,7 +38,7 @@ int main() {
 
   auto t_start = std::chrono::high_resolution_clock::now();
   auto t_end = std::chrono::high_resolution_clock::now();
-  double elapsed_time_ms = std::chrono::duration<double, std::milli>(t_end-t_start).count();
+  double elapsed_time_ms = std::chrono::duration<double, std::milli>(t_end - t_start).count();
 
   auto tStartStateCalibHip = std::chrono::high_resolution_clock::now();
   auto tStartStateCalibThigh = std::chrono::high_resolution_clock::now();
@@ -48,18 +48,20 @@ int main() {
                 // 1: calibrate hip
                 // 2: calibrate thigh
                 // 3: finished
-  
+
   // Loop Cmd Data
-  while(false){
+  while (false)
+  {
     auto currTime{std::chrono::high_resolution_clock::now()};
 
     // STATE MACHINE 0
     if (state == 0)
     {
-      for (uint64_t id{0}; id < 3; ++id){
+      for (uint64_t id{0}; id < 3; ++id)
+      {
         cmd.motorType = MotorType::A1;
         data.motorType = MotorType::A1;
-        cmd.mode = queryMotorMode(MotorType::A1,MotorMode::FOC);
+        cmd.mode = queryMotorMode(MotorType::A1, MotorMode::FOC);
         cmd.id = id;
         cmd.kp = 0.0;
         cmd.kd = 0.0;
@@ -74,34 +76,34 @@ int main() {
       system("clear");
       std::cout << "Initializing... Process starts in 3 seconds \n";
       sleep(1);
-      system("clear"); 
+      system("clear");
       std::cout << "Initializing... Process starts in 2 seconds \n";
       sleep(1);
-      system("clear"); 
+      system("clear");
       std::cout << "Initializing... Process starts in 1 seconds \n";
       sleep(1);
-      system("clear"); 
+      system("clear");
       state = 1;
       tStartStateCalibHip = std::chrono::high_resolution_clock::now();
-    } 
-    
+    }
+
     // STATE MACHINE 1
     else if (state == 1)
     {
       // Go to state 2 after 5 second.
-      if (std::chrono::duration<double, std::milli>(currTime-tStartStateCalibHip).count() >= 5000)
+      if (std::chrono::duration<double, std::milli>(currTime - tStartStateCalibHip).count() >= 5000)
       {
         // Transition to next state.
         system("clear");
         std::cout << "Process starts in 3 seconds, **REMOVE YOUR HAND** \n";
         sleep(1);
-        system("clear"); 
+        system("clear");
         std::cout << "Process starts in 2 seconds, **REMOVE YOUR HAND** \n";
         sleep(1);
-        system("clear"); 
+        system("clear");
         std::cout << "Process starts in 1 seconds, **REMOVE YOUR HAND** \n";
         sleep(1);
-        system("clear"); 
+        system("clear");
         state = 2;
         tStartStateCalibThigh = std::chrono::high_resolution_clock::now();
       }
@@ -109,7 +111,7 @@ int main() {
       {
         cmd.motorType = MotorType::A1;
         data.motorType = MotorType::A1;
-        cmd.mode = queryMotorMode(MotorType::A1,MotorMode::BRAKE);
+        cmd.mode = queryMotorMode(MotorType::A1, MotorMode::BRAKE);
         cmd.id = 0;
         cmd.kp = 0.0;
         cmd.kd = 0.0;
@@ -120,28 +122,28 @@ int main() {
         serial.sendRecv(&cmd, &data);
 
         // bias = y / gear_ratio - ax
-        offsetAngles[0] = data.q / queryGearRatio(MotorType::GO_M8010_6) - invertedIndex[0] *  targetAngles[0];
+        offsetAngles[0] = data.q / queryGearRatio(MotorType::GO_M8010_6) - invertedIndex[0] * targetAngles[0];
         std::cout << "hip offset: " << offsetAngles[0] << "\n";
       }
     }
-    
+
     // STATE MACHINE 2
     else if (state == 2)
     {
       // Go to state 3 after 15 second.
-      if (std::chrono::duration<double, std::milli>(currTime-tStartStateCalibThigh).count() >= 10000)
+      if (std::chrono::duration<double, std::milli>(currTime - tStartStateCalibThigh).count() >= 10000)
       {
         // Transition to next state.
         system("clear");
         std::cout << "Process starts in 3 seconds, **REMOVE YOUR HAND** \n";
         sleep(1);
-        system("clear"); 
+        system("clear");
         std::cout << "Process starts in 2 seconds, **REMOVE YOUR HAND** \n";
         sleep(1);
-        system("clear"); 
+        system("clear");
         std::cout << "Process starts in 1 seconds, **REMOVE YOUR HAND** \n";
         sleep(1);
-        system("clear"); 
+        system("clear");
         tStartStateCalibFinal = std::chrono::high_resolution_clock::now();
         state = 3;
       }
@@ -149,7 +151,7 @@ int main() {
       {
         cmd.motorType = MotorType::A1;
         data.motorType = MotorType::A1;
-        cmd.mode = queryMotorMode(MotorType::A1,MotorMode::FOC);
+        cmd.mode = queryMotorMode(MotorType::A1, MotorMode::FOC);
         cmd.id = 0;
         cmd.kp = 0.016;
         cmd.kd = 0.32;
@@ -161,10 +163,11 @@ int main() {
 
         serial.sendRecv(&cmd, &data);
 
-        for (uint64_t id{1}; id < 3; ++id){
+        for (uint64_t id{1}; id < 3; ++id)
+        {
           cmd.motorType = MotorType::A1;
           data.motorType = MotorType::A1;
-          cmd.mode = queryMotorMode(MotorType::A1,MotorMode::FOC);
+          cmd.mode = queryMotorMode(MotorType::A1, MotorMode::FOC);
           cmd.id = id;
           cmd.kp = 0.0;
           cmd.kd = 0.0;
@@ -184,7 +187,7 @@ int main() {
         }
       }
     }
-    
+
     // STATE MACHINE 3
     else if (state == 3)
     {
@@ -196,10 +199,11 @@ int main() {
       std::cout << "you enter: " << q0 << " " << q1 << " " << q2 << "\n";
       cmdAngles = {q0, q1, q2};
 
-      for (uint64_t id{0}; id < 3; ++id){
+      for (uint64_t id{0}; id < 3; ++id)
+      {
         cmd.motorType = MotorType::A1;
         data.motorType = MotorType::A1;
-        cmd.mode = queryMotorMode(MotorType::A1,MotorMode::FOC);
+        cmd.mode = queryMotorMode(MotorType::A1, MotorMode::FOC);
         cmd.id = id;
         cmd.kp = 0.016;
         cmd.kd = 0.32;
@@ -210,7 +214,7 @@ int main() {
         cmd.tau = 0.0;
 
         serial.sendRecv(&cmd, &data);
-        
+
         std::cout << "[" << id << "] cmd angle  : " << cmdAngles[id] << "\n";
         std::cout << "[" << id << "] go1 angle  : " << data.q / queryGearRatio(MotorType::GO_M8010_6) << "\n";
         std::cout << "[" << id << "] offset     : " << offsetAngles[id] << "\n";
@@ -223,6 +227,3 @@ int main() {
     usleep(200);
   }
 }
-
-
-    
