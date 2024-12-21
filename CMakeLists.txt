@@ -35,6 +35,9 @@ target_link_libraries(go1_read_motors ${EXTRA_LIBS})
 add_executable(go1_calibration_lagacy example/go1_calibration_lagacy.cpp)
 target_link_libraries(go1_calibration_lagacy ${EXTRA_LIBS})
 
+add_executable(go1_calibration example/go1_calibration.cpp)
+target_link_libraries(go1_calibration ${EXTRA_LIBS})
+
 set(LIBRARY_OUTPUT_PATH "../lib")
 add_subdirectory(thirdparty/pybind11)
 pybind11_add_module(unitree_actuator_sdk thirdparty/python_wrapper/wrapper.cpp)
